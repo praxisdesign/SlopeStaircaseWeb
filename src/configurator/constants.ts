@@ -6,7 +6,7 @@ export const DEFAULT_PARAMETERS: StairParameters = {
   totalHeight: 2000,
   stepHeight: 200,
   platformCount: 0,
-  toeStyle: 'vertical',
+  toeStyle: 'none',
   showDimensions: true,
 }
 
