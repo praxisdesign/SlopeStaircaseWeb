@@ -1,4 +1,4 @@
-import { Bounds, ContactShadows, OrbitControls, Text } from '@react-three/drei'
+import { Bounds, OrbitControls, Text } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { useMemo } from 'react'
 import { useStairStore } from '../configurator/store'
@@ -59,17 +59,29 @@ function StairModel() {
   )
 }
 
+function SceneFloor() {
+  const params = useStairStore((state) => state.params)
+  const stepCount = Math.max(1, Math.round(params.totalHeight / params.stepHeight))
+  const stepRise = params.totalHeight / stepCount / 1000
+  const floorY = -0.8 - stepRise / 2
+
+  return (
+    <>
+      <gridHelper args={[18, 36, '#cbd5df', '#dce4eb']} position={[0, floorY, 0]} />
+    </>
+  )
+}
+
 export function StairScene() {
   return (
     <Canvas shadows camera={{ position: [5.8, 3.2, 5.8], fov: 42 }}>
       <color attach="background" args={['#eef3f7']} />
-      <gridHelper args={[18, 36, '#cbd5df', '#dce4eb']} position={[0, -0.84, 0]} />
       <ambientLight intensity={0.8} />
       <directionalLight position={[4, 6, 4]} intensity={2.2} castShadow />
       <Bounds fit clip observe margin={1.4}>
         <StairModel />
       </Bounds>
-      <ContactShadows opacity={0.28} blur={2.6} position={[0, -0.82, 0]} />
+      <SceneFloor />
       <OrbitControls makeDefault enablePan={false} minDistance={3} maxDistance={14} />
     </Canvas>
   )
