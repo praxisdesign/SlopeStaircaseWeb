@@ -62,7 +62,8 @@ function StairModel() {
 export function StairScene() {
   return (
     <Canvas shadows camera={{ position: [5.8, 3.2, 5.8], fov: 42 }}>
-      <color attach="background" args={['#b9d7dc']} />
+      <color attach="background" args={['#eef3f7']} />
+      <gridHelper args={[18, 36, '#cbd5df', '#dce4eb']} position={[0, -0.84, 0]} />
       <ambientLight intensity={0.8} />
       <directionalLight position={[4, 6, 4]} intensity={2.2} castShadow />
       <Bounds fit clip observe margin={1.4}>

@@ -1,42 +1,53 @@
 .app-shell {
-  min-height: 100vh;
-  background: #f4f2ec;
-  color: #17212b;
+  height: 100vh;
+  overflow: hidden;
+  background: #eef3f7;
+  color: #111827;
 }
 
-.topbar {
+.workspace {
+  display: grid;
+  grid-template-columns: 394px minmax(0, 1fr);
+  height: 100vh;
+}
+
+.control-panel {
   display: flex;
+  min-height: 0;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+  border-right: 1px solid #d8e0ea;
+  background: #f8fafc;
+  padding: 18px 36px 24px 8px;
+  scrollbar-color: #8b8b8b transparent;
+  scrollbar-width: auto;
+}
+
+.brand-header {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 38px;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 24px 32px;
-  border-bottom: 1px solid #ded9ce;
+  gap: 10px;
+  color: #0f172a;
 }
 
-.eyebrow {
-  margin: 0 0 4px;
-  color: #5f6f78;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0;
-  text-transform: uppercase;
-}
-
-h1,
-h2 {
+.brand-header h1 {
   margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.05;
   letter-spacing: 0;
 }
 
-h1 {
-  font-size: 28px;
-  line-height: 1.1;
+.brand-header p {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 16px;
+  font-weight: 500;
 }
 
-h2 {
-  font-size: 18px;
-}
-
+h2,
 p {
   margin: 0;
 }
@@ -53,37 +64,30 @@ button {
 
 .icon-button {
   display: inline-grid;
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   place-items: center;
-  border: 1px solid #cbc5b9;
+  border: 1px solid #d7e0ea;
   border-radius: 8px;
-  background: #fffdf8;
-  color: #17212b;
+  background: #ffffff;
+  color: #1f2937;
 }
 
-.workspace {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 390px;
-  min-height: calc(100vh - 89px);
-}
-
-.viewer-panel {
-  min-height: 620px;
-  background: #b9d7dc;
-}
-
-.control-panel {
-  display: flex;
-  flex-direction: column;
-  border-left: 1px solid #ded9ce;
-  background: #fffdf8;
+.settings-card,
+.export-panel {
+  border: 1px solid #d7e0ea;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 1px 1px rgba(15, 23, 42, 0.02);
 }
 
 .panel-tabs {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  border-bottom: 1px solid #ded9ce;
+  overflow: hidden;
+  border: 1px solid #d7e0ea;
+  border-radius: 8px;
+  background: #ffffff;
 }
 
 .panel-tabs button {
@@ -91,47 +95,53 @@ button {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 52px;
+  min-height: 44px;
   border: 0;
-  border-bottom: 3px solid transparent;
   background: transparent;
-  color: #52616b;
-  font-weight: 700;
+  color: #64748b;
+  font-weight: 800;
 }
 
 .panel-tabs button.active {
-  border-bottom-color: #d9c600;
-  color: #17212b;
+  background: #2563eb;
+  color: #ffffff;
 }
 
 .parameter-panel,
 .export-panel {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 24px;
-  overflow: auto;
+  gap: 16px;
 }
 
-.parameter-panel > div:first-child p,
-.export-panel > div:first-child p {
-  margin-top: 6px;
-  color: #5f6f78;
-  font-size: 14px;
+.settings-card,
+.export-panel {
+  padding: 18px;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.card-title h2,
+.export-panel h2 {
+  color: #111827;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0;
 }
 
 .control-list {
   display: grid;
-  gap: 16px;
+  gap: 18px;
 }
 
 .range-control {
   display: grid;
   gap: 10px;
-  padding: 14px;
-  border: 1px solid #e5dfd3;
-  border-radius: 8px;
-  background: #ffffff;
 }
 
 .range-control span {
@@ -139,100 +149,118 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  font-weight: 700;
+  color: #1f2937;
+  font-size: 16px;
+  font-weight: 800;
 }
 
-.range-control strong {
-  color: #52616b;
-  font-size: 14px;
+.range-control strong,
+.speed-control strong {
+  color: #64748b;
+  font-weight: 800;
 }
 
-.range-control input[type='range'] {
+.range-control input[type='range'],
+.speed-control input[type='range'] {
   width: 100%;
-  accent-color: #2878bd;
+  accent-color: #2563eb;
 }
 
-.range-control input[type='number'],
-.select-control select,
-.export-panel input {
-  width: 100%;
-  box-sizing: border-box;
-  border: 1px solid #cbc5b9;
-  border-radius: 6px;
-  background: #fffdf8;
-  color: #17212b;
-  padding: 10px 12px;
-}
-
-.select-control,
-.export-panel label {
-  display: grid;
-  gap: 8px;
-  color: #17212b;
-  font-weight: 700;
-}
-
-.toggle-control,
 .export-actions button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   min-height: 44px;
-  border: 0;
   border-radius: 8px;
-  background: #17212b;
-  color: #ffffff;
-  font-weight: 700;
+  font-weight: 800;
+}
+
+.select-control,
+.export-panel label {
+  display: grid;
+  gap: 8px;
+  color: #1f2937;
+  font-weight: 800;
+}
+
+.select-control select,
+.export-panel input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #d7e0ea;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #111827;
+  padding: 10px 12px;
 }
 
 .validation-box {
   display: grid;
   gap: 8px;
   padding: 14px;
-  border: 1px solid #e4c073;
+  border: 1px solid #facc15;
   border-radius: 8px;
-  background: #fff6db;
-  color: #6a4a00;
+  background: #fefce8;
+  color: #854d0e;
+  font-size: 14px;
+}
+
+.export-panel {
+  gap: 16px;
+}
+
+.export-panel > div:first-child p {
+  margin-top: 6px;
+  color: #64748b;
   font-size: 14px;
 }
 
 .export-actions {
   display: grid;
   gap: 10px;
-  margin-top: 4px;
+}
+
+.export-actions button:first-child {
+  border: 0;
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.export-actions button:last-child {
+  border: 1px solid #d7e0ea;
+  background: #ffffff;
+  color: #111827;
+}
+
+.viewer-panel {
+  min-width: 0;
+  min-height: 0;
+  background: #eef3f7;
 }
 
 @media (max-width: 980px) {
-  .workspace {
-    grid-template-columns: 1fr;
+  .app-shell {
+    height: auto;
+    overflow: visible;
   }
 
-  .viewer-panel {
-    min-height: 460px;
+  .workspace {
+    grid-template-columns: 1fr;
+    height: auto;
   }
 
   .control-panel {
-    border-left: 0;
-    border-top: 1px solid #ded9ce;
-  }
-}
-
-@media (max-width: 640px) {
-  .topbar {
+    order: 2;
+    max-height: none;
+    border-right: 0;
+    border-top: 1px solid #d8e0ea;
     padding: 18px;
-  }
-
-  h1 {
-    font-size: 22px;
   }
 
   .viewer-panel {
+    order: 1;
+    height: 52vh;
     min-height: 360px;
-  }
-
-  .parameter-panel,
-  .export-panel {
-    padding: 18px;
   }
 }

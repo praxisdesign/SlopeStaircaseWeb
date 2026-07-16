@@ -1,4 +1,4 @@
-import { Download, FileText, Mail, RotateCcw, Send } from 'lucide-react'
+import { Download, FileText, Mail, Printer, RotateCcw, Send } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import './App.css'
 import { ParameterPanel } from './components/ParameterPanel'
@@ -14,22 +14,19 @@ function App() {
 
   return (
     <main className="app-shell">
-      <header className="topbar">
-        <div>
-          <p className="eyebrow">3D slope stair configurator</p>
-          <h1>SlopeStaircaseWeb</h1>
-        </div>
-        <button type="button" className="icon-button" onClick={reset} title="Reset design">
-          <RotateCcw size={18} />
-        </button>
-      </header>
-
       <section className="workspace" aria-label="Slope stair configurator">
-        <div className="viewer-panel">
-          <StairScene />
-        </div>
-
         <aside className="control-panel" aria-label="Configurator controls">
+          <header className="brand-header">
+            <Printer size={26} strokeWidth={2.2} />
+            <div>
+              <h1>SlopeStaircaseWeb</h1>
+              <p>Concrete Stair v1</p>
+            </div>
+            <button type="button" className="icon-button" onClick={reset} title="Reset design">
+              <RotateCcw size={17} />
+            </button>
+          </header>
+
           <nav className="panel-tabs" aria-label="Configuration steps">
             <button
               type="button"
@@ -82,6 +79,10 @@ function App() {
             </section>
           )}
         </aside>
+
+        <div className="viewer-panel">
+          <StairScene />
+        </div>
       </section>
     </main>
   )
