@@ -29,7 +29,7 @@ export function ParameterPanel({ issues }: ParameterPanelProps) {
       <div className="settings-card">
         <div className="card-title">
           <Layers size={19} />
-          <h2>Slice</h2>
+          <h2>Size</h2>
         </div>
 
         <div className="control-list">
