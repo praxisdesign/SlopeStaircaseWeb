@@ -12,6 +12,7 @@ function StairModel() {
   const width = params.width / 1000
   const totalLength = stepDepth * stepCount
   const totalRise = stepRise * stepCount
+  const slopeAngleDegrees = THREE.MathUtils.radToDeg(Math.atan2(totalRise, totalLength))
   const printBead = 0.06
   const slopeGeometry = useMemo(
     () => createSlopeBeadGeometry(totalLength, totalRise, printBead, width),
@@ -64,16 +65,55 @@ function StairModel() {
       ))}
 
       {params.showDimensions && (
-        <Text
-          position={[totalLength / 2, totalRise + 0.35, -width * 0.65]}
-          fontSize={0.28}
-          color="#1e293b"
-          anchorX="center"
-        >
-          {`${params.width}W x ${params.totalLength}L x ${params.totalHeight}H mm`}
-        </Text>
+        <>
+          <Text
+            position={[totalLength / 2, totalRise + 0.35, -width * 0.65]}
+            fontSize={0.28}
+            color="#1e293b"
+            anchorX="center"
+          >
+            {`${params.width}W x ${params.totalLength}L x ${params.totalHeight}H mm · ${slopeAngleDegrees.toFixed(1)}°`}
+          </Text>
+          <AngleDimension totalLength={totalLength} totalRise={totalRise} width={width} />
+        </>
       )}
       </group>
+    </group>
+  )
+}
+
+type AngleDimensionProps = {
+  totalLength: number
+  totalRise: number
+  width: number
+}
+
+function AngleDimension({ totalLength, totalRise, width }: AngleDimensionProps) {
+  const angle = Math.atan2(totalRise, totalLength)
+  const radius = Math.min(Math.max(Math.min(totalLength, totalRise) * 0.32, 0.35), 0.85)
+  const dimensionZ = -Math.max(width * 0.12, 0.09)
+  const dimensionLine = useMemo(() => {
+    const points = [new THREE.Vector3(0, 0, dimensionZ), new THREE.Vector3(radius * 1.25, 0, dimensionZ)]
+    const arcSegments = 28
+
+    for (let index = 0; index <= arcSegments; index += 1) {
+      const arcAngle = (angle * index) / arcSegments
+      points.push(new THREE.Vector3(Math.cos(arcAngle) * radius, Math.sin(arcAngle) * radius, dimensionZ))
+    }
+
+    points.push(
+      new THREE.Vector3(0, 0, dimensionZ),
+      new THREE.Vector3(Math.cos(angle) * radius * 1.25, Math.sin(angle) * radius * 1.25, dimensionZ),
+    )
+
+    const geometry = new THREE.BufferGeometry().setFromPoints(points)
+    const material = new THREE.LineBasicMaterial({ color: '#2563eb' })
+
+    return new THREE.Line(geometry, material)
+  }, [angle, dimensionZ, radius])
+  return (
+    <group>
+      <primitive object={dimensionLine} />
     </group>
   )
 }
