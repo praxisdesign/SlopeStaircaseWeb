@@ -2,13 +2,14 @@ import { Bounds, GizmoHelper, GizmoViewport, OrbitControls, Text } from '@react-
 import { Canvas } from '@react-three/fiber'
 import { useMemo } from 'react'
 import * as THREE from 'three'
+import { getStairGeometry } from '../configurator/geometry'
 import { useStairStore } from '../configurator/store'
 
 function StairModel() {
   const params = useStairStore((state) => state.params)
-  const stepCount = Math.max(1, Math.round(params.totalHeight / params.stepHeight))
-  const stepDepth = params.totalLength / stepCount / 1000
-  const stepRise = params.totalHeight / stepCount / 1000
+  const { stepCount, stepDepth: stepDepthMm, stepRise: stepRiseMm } = getStairGeometry(params)
+  const stepDepth = stepDepthMm / 1000
+  const stepRise = stepRiseMm / 1000
   const width = params.width / 1000
   const totalLength = stepDepth * stepCount
   const totalRise = stepRise * stepCount
@@ -353,6 +354,7 @@ export function StairScene() {
     <Canvas
       shadows
       camera={{ position: [5.8, -5.8, 3.2], fov: 42, up: [0, 0, 1] }}
+      gl={{ preserveDrawingBuffer: true }}
       onCreated={({ camera }) => {
         camera.up.set(0, 0, 1)
       }}

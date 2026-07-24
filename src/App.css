@@ -170,6 +170,12 @@ button {
   accent-color: #2563eb;
 }
 
+.control-note {
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .export-actions button {
   display: inline-flex;
   align-items: center;

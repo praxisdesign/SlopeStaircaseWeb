@@ -12,12 +12,17 @@ type ParameterPanelProps = {
   issues: string[]
 }
 
-const controls: Array<{ key: ParameterKey; label: string; suffix: string }> = [
+const controls: Array<{ key: ParameterKey; label: string; suffix: string; note?: string }> = [
   { key: 'width', label: 'Stair Width', suffix: ' mm' },
   { key: 'totalLength', label: 'Run Length', suffix: ' mm' },
   { key: 'totalHeight', label: 'Rise Height', suffix: ' mm' },
   { key: 'stepHeight', label: 'Step Height', suffix: ' mm' },
-  { key: 'platformCount', label: 'Platform Preview', suffix: '' },
+  {
+    key: 'platformCount',
+    label: 'Platform Count',
+    suffix: '',
+    note: 'Not yet reflected in the 3D model — only used for the validation warning below.',
+  },
 ]
 
 export function ParameterPanel({ issues }: ParameterPanelProps) {
@@ -54,6 +59,7 @@ export function ParameterPanel({ issues }: ParameterPanelProps) {
                   value={value}
                   onChange={(event) => setParam(control.key, Number(event.target.value))}
                 />
+                {control.note && <small className="control-note">{control.note}</small>}
               </label>
             )
           })}

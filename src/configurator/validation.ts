@@ -1,15 +1,22 @@
+import { PARAMETER_LIMITS } from './constants'
+import { getStairGeometry } from './geometry'
 import type { StairParameters } from './types'
 
 export function getValidationIssues(params: StairParameters) {
   const issues: string[] = []
-  const estimatedSteps = params.totalHeight / params.stepHeight
-  const stepDepth = params.totalLength / estimatedSteps
+  const { stepCount, stepDepth, stepRise } = getStairGeometry(params)
 
   if (stepDepth < 240) {
     issues.push('Step depth is very short for the selected height and length.')
   }
 
-  if (estimatedSteps > 45) {
+  if (stepRise < PARAMETER_LIMITS.stepHeight.min || stepRise > PARAMETER_LIMITS.stepHeight.max) {
+    issues.push(
+      `Effective riser height (${stepRise.toFixed(0)}mm) falls outside the safe range (${PARAMETER_LIMITS.stepHeight.min}-${PARAMETER_LIMITS.stepHeight.max}mm) once rounded to a whole number of steps. Adjust Rise Height or Step Height.`,
+    )
+  }
+
+  if (stepCount > 45) {
     issues.push('This design has many steps. Add platforms or reduce the height.')
   }
 
