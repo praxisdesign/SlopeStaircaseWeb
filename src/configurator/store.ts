@@ -1,11 +1,13 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { DEFAULT_PARAMETERS, PARAMETER_LIMITS } from './constants'
-import type { StairParameters } from './types'
+import type { CameraSnapshot, StairParameters } from './types'
 
 type StairStore = {
   params: StairParameters
+  camera: CameraSnapshot | null
   setParam: <Key extends keyof StairParameters>(key: Key, value: StairParameters[Key]) => void
+  setCamera: (camera: CameraSnapshot | null) => void
   reset: () => void
 }
 
@@ -27,6 +29,7 @@ export const useStairStore = create<StairStore>()(
   persist(
     (set) => ({
       params: DEFAULT_PARAMETERS,
+      camera: null,
       setParam: (key, value) =>
         set((state) => {
           const nextValue =
@@ -41,6 +44,7 @@ export const useStairStore = create<StairStore>()(
             },
           }
         }),
+      setCamera: (camera) => set({ camera }),
       reset: () => set({ params: DEFAULT_PARAMETERS }),
     }),
     { name: storageKey('slope-staircase') },

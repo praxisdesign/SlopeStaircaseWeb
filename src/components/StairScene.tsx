@@ -1,9 +1,82 @@
 import { Bounds, GizmoHelper, GizmoViewport, OrbitControls, Text } from '@react-three/drei'
-import { Canvas } from '@react-three/fiber'
-import { useMemo } from 'react'
+import { Canvas, useThree } from '@react-three/fiber'
+import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
+import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import { getStairGeometry } from '../configurator/geometry'
 import { useStairStore } from '../configurator/store'
+import type { CameraSnapshot } from '../configurator/types'
+
+// Guards against ever saving or restoring a broken camera snapshot -- e.g. one
+// captured mid-glitch while the Canvas/OrbitControls default-camera registration is
+// still settling right after mount (position and target collapsed to the same
+// point, or a NaN/Infinity). Restoring a snapshot like this would reproduce a
+// "camera won't move" state on every future visit.
+function isValidCameraSnapshot(camera: CameraSnapshot | null): camera is CameraSnapshot {
+  if (!camera) return false
+  const values = [...camera.position, ...camera.target]
+  if (values.length !== 6 || values.some((value) => typeof value !== 'number' || !Number.isFinite(value))) {
+    return false
+  }
+  const [px, py, pz] = camera.position
+  const [tx, ty, tz] = camera.target
+  return Math.hypot(px - tx, py - ty, pz - tz) > 1e-4
+}
+
+function CameraController() {
+  const controlsRef = useRef<OrbitControlsImpl>(null)
+  const { camera, invalidate } = useThree()
+  const storedCamera = useStairStore((state) => state.camera)
+  const setCamera = useStairStore((state) => state.setCamera)
+  const hasAppliedRef = useRef(false)
+
+  useEffect(() => {
+    if (hasAppliedRef.current || !isValidCameraSnapshot(storedCamera)) {
+      return undefined
+    }
+    hasAppliedRef.current = true
+
+    const applyRestoredCamera = () => {
+      camera.position.set(...storedCamera.position)
+      camera.updateProjectionMatrix()
+      controlsRef.current?.target.set(...storedCamera.target)
+      controlsRef.current?.update()
+      invalidate()
+    }
+
+    // Re-assert for a short window: right after the Canvas first mounts (and after
+    // Bounds' own `fit` runs once for the initial geometry), the default-camera/
+    // OrbitControls registration can still be settling, which silently overwrites a
+    // same-tick set() a moment later and can even leave OrbitControls unresponsive
+    // to further drag/orbit input.
+    let cancelled = false
+    let frame = 0
+    const reapply = () => {
+      if (cancelled) return
+      applyRestoredCamera()
+      frame += 1
+      if (frame < 20) requestAnimationFrame(reapply)
+    }
+    reapply()
+    return () => {
+      cancelled = true
+    }
+  }, [camera, invalidate, storedCamera])
+
+  function handleCameraChangeEnd() {
+    const controls = controlsRef.current
+    if (!controls) return
+    const candidate: CameraSnapshot = {
+      position: controls.object.position.toArray() as [number, number, number],
+      target: controls.target.toArray() as [number, number, number],
+    }
+    if (isValidCameraSnapshot(candidate)) setCamera(candidate)
+  }
+
+  return (
+    <OrbitControls ref={controlsRef} makeDefault enablePan minDistance={3} maxDistance={14} onEnd={handleCameraChangeEnd} />
+  )
+}
 
 function StairModel() {
   const params = useStairStore((state) => state.params)
@@ -366,7 +439,7 @@ export function StairScene() {
         <StairModel />
       </Bounds>
       <SceneFloor />
-      <OrbitControls makeDefault enablePan minDistance={3} maxDistance={14} />
+      <CameraController />
       <GizmoHelper alignment="bottom-left" margin={[80, 80]}>
         <GizmoViewport axisColors={['#ef4444', '#22c55e', '#3b82f6']} labelColor="#0f172a" />
       </GizmoHelper>
